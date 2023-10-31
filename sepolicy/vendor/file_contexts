@@ -32,6 +32,7 @@
 /(vendor|system/vendor)/bin/hw/vendor\.lenovo\.hardware\.ifaa@1\.0-service u:object_r:hal_ifaa_default_exec:s0
 
 # Vibrator
+/vendor/bin/hw/vendor\.qti\.hardware\.vibrator\.service-lenovo                            u:object_r:hal_vibrator_default_exec:s0
 /dev/aw8697_haptic                                                                         u:object_r:aac_richtap_dev_device:s0
 /dev/aw8697_haptic_r                                                                       u:object_r:aac_richtap_dev_device:s0
 /dev/aw8697_haptic_l                                                                       u:object_r:aac_richtap_dev_device:s0

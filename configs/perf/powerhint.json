@@ -5,7 +5,7 @@
       "Path": "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",
       "Values": [
         "9999999",
-        "1574400"
+        "1670400"
       ],
       "DefaultIndex": 0,
       "ResetOnInit": true
@@ -15,8 +15,9 @@
       "Path": "/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq",
       "Values": [
         "9999999",
-        "1363200",
-        "614400"
+        "1555200",
+        "1324800",
+        "691200"
       ],
       "ResetOnInit": true
     },
@@ -123,7 +124,7 @@
       "Path": "/dev/cpuctl/top-app/cpu.uclamp.min",
       "Values": [
         "0",
-        "30",
+        "25",
         "50"
       ],
       "DefaultIndex": 0,
@@ -369,7 +370,7 @@
       "PowerHint": "SUSTAINED_PERFORMANCE",
       "Node": "CPULittleClusterMaxFreq",
       "Duration": 0,
-      "Value": "1574400"
+      "Value": "1670400"
     },
     {
       "PowerHint": "SUSTAINED_PERFORMANCE",
@@ -379,9 +380,21 @@
     },
     {
       "PowerHint": "INTERACTION",
+      "Node": "CPUBigClusterMinFreq",
+      "Duration": 0,
+      "Value": "1324800"
+    },
+    {
+      "PowerHint": "INTERACTION",
+      "Node": "CPULittleClusterMinFreq",
+      "Duration": 0,
+      "Value": "1555200"
+    },
+    {
+      "PowerHint": "INTERACTION",
       "Node": "UclampTAMin",
       "Duration": 0,
-      "Value": "30"
+      "Value": "25"
     },
     {
       "PowerHint": "INTERACTION",
@@ -466,6 +479,12 @@
       "Node": "LLCCBWMinFreq",
       "Duration": 0,
       "Value": "600000"
+    },
+    {
+      "PowerHint": "INTERACTION",
+      "Node": "GPUMinFreq",
+      "Duration": 0,
+      "Value": "364000000"
     },
     {
       "PowerHint": "INTERACTIVE",
@@ -633,7 +652,7 @@
       "PowerHint": "Flipendo",
       "Node": "CPULittleClusterMaxFreq",
       "Duration": 0,
-      "Value": "1574400"
+      "Value": "1670400"
     },
     {
       "PowerHint": "Flipendo",

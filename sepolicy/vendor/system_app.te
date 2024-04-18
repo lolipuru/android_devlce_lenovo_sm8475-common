@@ -1,0 +1,13 @@
+allow system_app {
+    vendor_hal_gnss_qti
+    hal_health_default
+    hal_power_default
+    vendor_hal_keymint_qti
+    hal_audio_default
+    hal_bootctl_default
+    hal_thermal_default
+    vendor_hal_usb_qti
+    hal_vibrator_default
+    hal_wifi_default
+    hal_wifi_supplicant_default
+}:binder { call };

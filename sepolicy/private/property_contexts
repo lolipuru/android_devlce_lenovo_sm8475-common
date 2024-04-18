@@ -1,0 +1,7 @@
+# Camera
+ro.camera.req.fmq.                      u:object_r:exported_default_prop:s0
+ro.camera.res.fmq.                      u:object_r:exported_default_prop:s0
+
+# NVRAM
+ro.product.countrycode                  u:object_r:nvram_lenovo_prop:s0
+sys.lenovosn                            u:object_r:nvram_lenovo_prop:s0

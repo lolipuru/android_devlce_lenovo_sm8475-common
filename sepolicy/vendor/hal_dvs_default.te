@@ -1,0 +1,18 @@
+type hal_dvs_default, domain;
+type hal_dvs_default_exec, exec_type, file_type, vendor_file_type;
+type hal_dvs_hwservice, hwservice_manager_type;
+init_daemon_domain(hal_dvs_default)
+
+allow hal_dvs_client hal_dvs_hwservice:hwservice_manager find;
+allow hal_dvs_client hal_dvs_server:binder { call transfer };
+allow hal_dvs_server hal_dvs_client:binder transfer;
+allow hal_dvs_client hal_dvs_server:fd use;
+allow hal_dvs_server property_socket:sock_file write;
+allow hal_dvs_server init:unix_stream_socket connectto;
+allow hal_dvs_server hal_dvs_hwservice:hwservice_manager find;
+allow hal_dvs_default hal_dvs_hwservice:hwservice_manager find;
+
+add_hwservice(hal_dvs_server, hal_dvs_hwservice)
+
+get_prop(hal_dvs_default, hwservicemanager_prop)
+set_prop(hal_dvs_server, vendor_dolbyv_prop)

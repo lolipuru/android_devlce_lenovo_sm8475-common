@@ -1,0 +1,8 @@
+# Camera
+vendor.lenovocamera.packagename.zui    u:object_r:vendor_camera_prop:s0
+vendor.camera.                         u:object_r:vendor_camera_prop:s0
+ro.vendor.camera.res.fmq.size          u:object_r:vendor_camera_prop:s0
+
+# Dolby
+persist.vendor.dolbyv.      u:object_r:vendor_dolbyv_prop:s0
+vendor.dolbyv.              u:object_r:vendor_dolbyv_prop:s0

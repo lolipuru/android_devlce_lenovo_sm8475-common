@@ -1,0 +1,33 @@
+# Battery
+genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,battery_charger/power_supply/battery/voltage_max                                      u:object_r:vendor_sysfs_battery_supply:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,battery_charger/power_supply/usb/voltage_max                                          u:object_r:vendor_sysfs_battery_supply:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,battery_charger/power_supply/wireless/voltage_max                                     u:object_r:vendor_sysfs_battery_supply:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,ucsi/power_supply/ucsi-source-psy-soc:qcom,pmic_glink:qcom,ucsi1/voltage_max          u:object_r:vendor_sysfs_battery_supply:s0
+
+# Charger
+genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,ucsi/power_supply/ucsi-source-psy-soc:qcom,pmic_glink:qcom,ucsi1/current_max		u:object_r:vendor_sysfs_battery_supply:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,ucsi/power_supply/ucsi-source-psy-soc:qcom,pmic_glink:qcom,ucsi1/current_now		u:object_r:vendor_sysfs_battery_supply:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,ucsi/power_supply/ucsi-source-psy-soc:qcom,pmic_glink:qcom,ucsi1/online		u:object_r:vendor_sysfs_battery_supply:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,ucsi/power_supply/ucsi-source-psy-soc:qcom,pmic_glink:qcom,ucsi1/type			u:object_r:vendor_sysfs_battery_supply:s0
+
+# Extcon
+genfscon sysfs /devices/platform/soc/soc:spf_core_platform/soc:spf_core_platform:lpass-cdc/wcd938x-codec/extcon/extcon3/cable.0/name     u:object_r:sysfs_extcon:s0
+genfscon sysfs /devices/platform/soc/soc:spf_core_platform/soc:spf_core_platform:lpass-cdc/wcd938x-codec/extcon/extcon3/cable.1/name     u:object_r:sysfs_extcon:s0
+genfscon sysfs /devices/platform/soc/soc:spf_core_platform/soc:spf_core_platform:lpass-cdc/wcd938x-codec/extcon/extcon3/cable.2/name     u:object_r:sysfs_extcon:s0
+genfscon sysfs /devices/platform/soc/soc:spf_core_platform/soc:spf_core_platform:lpass-cdc/wcd938x-codec/extcon/extcon3/cable.3/name     u:object_r:sysfs_extcon:s0
+genfscon sysfs /devices/platform/soc/88e0000.qcom,msm-eud/extcon/extcon0/cable.0/name     u:object_r:sysfs_extcon:s0
+genfscon sysfs /devices/platform/soc/88e0000.qcom,msm-eud/extcon/extcon0/cable.1/name     u:object_r:sysfs_extcon:s0
+genfscon sysfs /devices/platform/soc/88e0000.qcom,msm-eud/extcon/extcon0/cable.2/name     u:object_r:sysfs_extcon:s0
+
+# Fingerprint
+genfscon sysfs /devices/platform/soc/soc:fpc1020/wakeup u:object_r:sysfs_wakeup:s0
+
+# Vibrator
+genfscon sysfs /devices/platform/soc/a98000.i2c/i2c-[0-9]+/[0-9]+-005a/leds/vibrator(/.*)?            u:object_r:sysfs_vibrator:s0
+genfscon sysfs /devices/platform/soc/88c000.i2c/i2c-[0-9]+/[0-9]+-005a/leds/vibrator_aw8697x(/.*)?    u:object_r:sysfs_vibrator:s0
+genfscon sysfs /class/leds/vibrator/activate                                                                                                                                         u:object_r:sysfs_leds:s0
+genfscon sysfs /class/leds/vibrator/state                                                                                                                                            u:object_r:sysfs_leds:s0
+genfscon sysfs /class/leds/vibrator/duration                                                                                                                                         u:object_r:sysfs_leds:s0
+
+# Wakeup
+genfscon sysfs /devices/platform/soc/a600000.ssusb/a600000.dwc3/wakeup                    u:object_r:sysfs_wakeup:s0

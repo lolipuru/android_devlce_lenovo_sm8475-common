@@ -185,6 +185,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     vendor.lineage.livedisplay@2.1-service.lenovo
 
+# Media
+TARGET_SUPPORTS_OMX_SERVICE := false
+
 # Partitions
 PRODUCT_PACKAGES += \
     vendor_bt_firmware_mountpoint \

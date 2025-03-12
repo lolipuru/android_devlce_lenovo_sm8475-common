@@ -95,6 +95,9 @@ ro.bluetooth.a2dp_offload.supported=true
 vendor.qc2audio.suspend.enabled=true
 vendor.qc2audio.per_frame.flac.dec.enabled=true
 
+# Brightness
+sys.brightness.disable_gamma_conversion=true
+
 # Chipset
 ro.soc.manufacturer=QTI
 

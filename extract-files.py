@@ -48,11 +48,6 @@ lib_fixups: lib_fixups_user_type = {
 }
 
 blob_fixups: blob_fixups_user_type = {
-    ('vendor/lib64/vendor.qti.hardware.qxr-V1-ndk_platform.so'): blob_fixup()
-        .replace_needed(
-            'android.hardware.common-V2-ndk_platform.so',
-            'android.hardware.common-V2-ndk.so',
-        ),
     (
         'vendor/bin/hw/android.hardware.security.keymint-service-qti', 
         'vendor/lib64/libqtikeymint.so'

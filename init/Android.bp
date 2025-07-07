@@ -9,3 +9,11 @@ prebuilt_etc {
     vendor: true,
     vendor_ramdisk_available: true,
 }
+
+prebuilt_etc {
+    name: "fstab-cust.qcom",
+    src: "etc/fstab-cust.qcom",
+    filename_from_src: true,
+    vendor: true,
+    vendor_ramdisk_available: true,
+}

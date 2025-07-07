@@ -192,11 +192,19 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.sensor.stepdetector.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/sku_cape/android.hardware.sensor.stepdetector.xml
 
 # Rootdir
+ifneq ($(filter asphalt,$(TARGET_DEVICE)),)
 PRODUCT_PACKAGES += \
     fstab.qcom
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/init/etc/fstab.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
+else
+PRODUCT_PACKAGES += \
+    fstab-cust.qcom
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/init/etc/fstab-cust.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
+endif
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \

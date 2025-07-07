@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Inherit 64bit support
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+
 # Call the proprietary setup.
 $(call inherit-product, vendor/lenovo/sm8475-common/sm8475-common-vendor.mk)
 

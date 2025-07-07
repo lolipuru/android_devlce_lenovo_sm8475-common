@@ -13,7 +13,21 @@ prebuilt_etc {
 prebuilt_etc {
     name: "fstab-cust.qcom",
     src: "etc/fstab-cust.qcom",
-    filename_from_src: true,
+    filename: "fstab.qcom",
     vendor: true,
     vendor_ramdisk_available: true,
+}
+
+prebuilt_etc {
+    name: "init.qcom.recovery.rc",
+    src: "etc/init.qcom.recovery.rc",
+    sub_dir: "init",
+    recovery: true,
+}
+
+prebuilt_etc {
+    name: "ueventd.lenovo.rc",
+    filename: "ueventd.rc",
+    src: "etc/ueventd.lenovo.rc",
+    vendor: true,
 }

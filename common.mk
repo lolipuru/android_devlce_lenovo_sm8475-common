@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Call the proprietary setup.
+$(call inherit-product, vendor/lenovo/sm8475-common/sm8475-common-vendor.mk)
+
 # Enable virtual AB with vendor ramdisk
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
 
@@ -119,6 +122,8 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.graphics.mapper@4.0-impl-qti-display \
     vendor.qti.hardware.display.allocator-service \
+    vendor.qti.hardware.display.composer-service \
+    vendor.qti.hardware.display.demura-service \
     init.qti.display_boot.rc \
     init.qti.display_boot.sh
 
@@ -205,6 +210,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/init/etc/fstab-cust.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
 endif
+
+PRODUCT_PACKAGES += \
+    init.qcom.recovery.rc \
+    ueventd.lenovo.rc
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \

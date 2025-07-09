@@ -268,8 +268,8 @@ PRODUCT_PACKAGES += \
     android.hardware.usb.gadget-service.qti
 
 PRODUCT_PACKAGES += \
-    init.qcom.usb.rc \
-    init.qcom.usb.sh \
+    init.qcom.usb.rc.lenovo \
+    init.qcom.usb.sh.lenovo \
     lenovo_usb_compositions.conf
 
 PRODUCT_SOONG_NAMESPACES += vendor/qcom/opensource/usb/etc

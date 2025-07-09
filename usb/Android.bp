@@ -6,5 +6,20 @@ prebuilt_etc {
     name: "lenovo_usb_compositions.conf",
     src: "usb_compositions.conf",
     filename_from_src: true,
-    device_specific: true,
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.qcom.usb.rc.lenovo",
+    src: "init.qcom.usb.rc",
+    filename_from_src: true,
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+sh_binary {
+    name: "init.qcom.usb.sh.lenovo",
+    src: "init.qcom.usb.sh",
+    filename_from_src: true,
+    vendor: true,
 }

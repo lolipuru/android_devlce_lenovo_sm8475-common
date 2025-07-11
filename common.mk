@@ -247,6 +247,7 @@ PRODUCT_COPY_FILES += \
 endif
 
 PRODUCT_PACKAGES += \
+    init.qcom.rc \
     init.qcom.recovery.rc \
     ueventd.lenovo.rc
 

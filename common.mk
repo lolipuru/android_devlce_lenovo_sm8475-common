@@ -249,11 +249,16 @@ endif
 PRODUCT_PACKAGES += \
     init.qcom.rc \
     init.qcom.recovery.rc \
+    init.target.rc \
     ueventd.lenovo.rc
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
-    $(LOCAL_PATH) \
+    $(LOCAL_PATH)
+
+# Telephony
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/permissions/qti_whitelist.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/sysconfig/qti_whitelist.xml
 
 # Thermal
 PRODUCT_PACKAGES += \

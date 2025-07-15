@@ -33,6 +33,13 @@ prebuilt_etc {
 }
 
 prebuilt_etc {
+    name: "init.target.rc",
+    src: "etc/init.target.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
     name: "ueventd.lenovo.rc",
     filename: "ueventd.rc",
     src: "etc/ueventd.lenovo.rc",

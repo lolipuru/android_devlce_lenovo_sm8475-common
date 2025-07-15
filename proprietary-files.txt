@@ -1,4 +1,5 @@
 ## All proprietary files from this list, unless pinned and noted otherwise,
+## from asphalt (TB320FC_CN_OPEN_USER_Q00031.0_V_ZUI_17.0.350_ST_250418)
 
 # ADSP
 vendor/bin/adsprpcd
@@ -180,12 +181,6 @@ vendor/lib64/libdiag.so
 vendor/lib64/libdiagjni.so
 vendor/lib64/vendor.qti.diaghal@1.0.so;MODULE_SUFFIX=-vendor
 
-# Display (Composer)
-vendor/bin/hw/vendor.qti.hardware.display.composer-service
-vendor/lib64/libsdedrm.so
-vendor/lib64/libsdmcore.so
-vendor/lib64/libsdmutils.so
-
 # Display (Features)
 vendor/bin/feature_enabler_client
 vendor/etc/init/feature_enabler_client.rc
@@ -281,52 +276,6 @@ vendor/lib64/libcvpcpuRev_skel.so
 vendor/lib64/libeva.so
 vendor/lib64/libeva_util.so
 
-# EVA firmware
-vendor/firmware/evass-lt-21.b00
-vendor/firmware/evass-lt-21.b01
-vendor/firmware/evass-lt-21.b02
-vendor/firmware/evass-lt-21.b03
-vendor/firmware/evass-lt-21.b04
-vendor/firmware/evass-lt-21.b05
-vendor/firmware/evass-lt-21.b06
-vendor/firmware/evass-lt-21.b07
-vendor/firmware/evass-lt-21.b08
-vendor/firmware/evass-lt-21.b09
-vendor/firmware/evass-lt-21.b10
-vendor/firmware/evass-lt-21.b11
-vendor/firmware/evass-lt-21.b12
-vendor/firmware/evass-lt-21.b13
-vendor/firmware/evass-lt-21.b14
-vendor/firmware/evass-lt-21.b15
-vendor/firmware/evass-lt-21.b16
-vendor/firmware/evass-lt-21.b17
-vendor/firmware/evass-lt-21.b18
-vendor/firmware/evass-lt-21.b19
-vendor/firmware/evass-lt-21.mbn
-vendor/firmware/evass-lt-21.mdt
-vendor/firmware/evass.b00
-vendor/firmware/evass.b01
-vendor/firmware/evass.b02
-vendor/firmware/evass.b03
-vendor/firmware/evass.b04
-vendor/firmware/evass.b05
-vendor/firmware/evass.b06
-vendor/firmware/evass.b07
-vendor/firmware/evass.b08
-vendor/firmware/evass.b09
-vendor/firmware/evass.b10
-vendor/firmware/evass.b11
-vendor/firmware/evass.b12
-vendor/firmware/evass.b13
-vendor/firmware/evass.b14
-vendor/firmware/evass.b15
-vendor/firmware/evass.b16
-vendor/firmware/evass.b17
-vendor/firmware/evass.b18
-vendor/firmware/evass.b19
-vendor/firmware/evass.mbn
-vendor/firmware/evass.mdt
-
 # EMBMS
 vendor/bin/embmsslServer
 vendor/lib64/libembmsservice.so
@@ -401,16 +350,6 @@ vendor/lib64/libllvm-glnext.so
 vendor/lib64/libllvm-qcom.so
 vendor/lib64/libllvm-qgl.so
 
-# Graphics (Adreno firmware)
-vendor/firmware/a730_sqe.fw
-vendor/firmware/a730_zap.b00
-vendor/firmware/a730_zap.b01
-vendor/firmware/a730_zap.b02
-vendor/firmware/a730_zap.elf
-vendor/firmware/a730_zap.mbn
-vendor/firmware/a730_zap.mdt
-vendor/firmware/gmu_gen70000.bin
-
 # Graphics (Vulkan)
 vendor/lib64/hw/vulkan.adreno.so
 
@@ -444,6 +383,7 @@ vendor/lib64/libxtwifi_server_protocol.so
 vendor/lib64/libxtwifi_server_protocol_uri_v3.so
 
 # IMS
+system/lib64/vendor.qti.diaghal-V1-ndk.so
 system_ext/etc/permissions/telephony_system-ext_privapp-permissions-qti.xml
 system_ext/etc/sysconfig/qti_telephony_system_packages_config.xml
 system_ext/etc/sysconfig/qti_whitelist_system_ext.xml
@@ -462,8 +402,6 @@ system_ext/lib64/lib-imsvt.so
 system_ext/lib64/lib-imsvtextutils.so
 system_ext/lib64/lib-imsvtutils.so
 system_ext/lib64/libdiag_system.so
-system_ext/lib64/libimscamera_jni.so;SYMLINK=system_ext/priv-app/ims/lib/arm64/libimscamera_jni.so
-system_ext/lib64/libimsmedia_jni.so;SYMLINK=system_ext/priv-app/ims/lib/arm64/libimsmedia_jni.so
 system_ext/lib64/vendor.qti.imsrtpservice@3.0.so
 system_ext/lib64/vendor.qti.imsrtpservice@3.1.so
 vendor/bin/ims_rtp_daemon
@@ -519,13 +457,13 @@ vendor/lib64/vendor.qti.ims.rcssip@1.2.so
 vendor/lib64/vendor.qti.ims.rcsuce@1.0.so
 vendor/lib64/vendor.qti.ims.rcsuce@1.1.so
 vendor/lib64/vendor.qti.ims.rcsuce@1.2.so
+system_ext/lib64/vendor.qti.ImsRtpService-V1-ndk.so
 vendor/lib64/vendor.qti.imsrtpservice@3.0-service-Impl.so
 vendor/lib64/vendor.qti.imsrtpservice@3.0.so;MODULE_SUFFIX=-vendor
 
 # Init
 vendor/bin/init.qcom.early_boot.sh
 vendor/bin/init.qcom.sh
-vendor/etc/init/hw/init.target.rc
 
 # IRQ balance
 vendor/bin/msm_irqbalance
@@ -736,7 +674,6 @@ vendor/bin/init.qti.qcv.sh
 vendor/etc/init/init.qti.qcv.rc
 
 # QMI
-system/etc/sysconfig/qti_whitelist.xml
 vendor/bin/irsc_util
 vendor/bin/qmipriod
 vendor/etc/init/qmipriod.rc
@@ -813,7 +750,6 @@ vendor/bin/qrtr-lookup
 vendor/bin/qrtr-ns
 vendor/etc/seccomp_policy/modemManager.policy
 vendor/etc/ssg/tz_whitelist.json
-vendor/etc/telephony_packages.xml
 vendor/lib64/libmdmdetect.so
 vendor/lib64/libmdmimgload.so
 vendor/lib64/liboemaids_vendor.so

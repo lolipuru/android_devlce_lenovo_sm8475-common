@@ -523,7 +523,6 @@ vendor/lib64/vendor.qti.imsrtpservice@3.0-service-Impl.so
 vendor/lib64/vendor.qti.imsrtpservice@3.0.so;MODULE_SUFFIX=-vendor
 
 # Init
-vendor/bin/init.class_main.sh
 vendor/bin/init.qcom.early_boot.sh
 vendor/bin/init.qcom.sh
 vendor/etc/init/hw/init.target.rc

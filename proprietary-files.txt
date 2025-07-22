@@ -186,9 +186,7 @@ vendor/bin/feature_enabler_client
 vendor/etc/init/feature_enabler_client.rc
 
 # Display (HDR)
-vendor/lib64/libhdr10plus.so;DISABLE_CHECKELF
 vendor/lib64/libhdr_backlight_adapter.so
-vendor/lib64/libhdr_stub.so
 vendor/lib64/libhdr_tm.so
 
 # Display (HWC)
@@ -404,6 +402,7 @@ system_ext/lib64/lib-imsvtutils.so
 system_ext/lib64/libdiag_system.so
 system_ext/lib64/vendor.qti.imsrtpservice@3.0.so
 system_ext/lib64/vendor.qti.imsrtpservice@3.1.so
+system_ext/lib64/vendor.qti.ImsRtpService-V1-ndk.so
 vendor/bin/ims_rtp_daemon
 vendor/bin/imsdaemon
 vendor/etc/init/ims_rtp_daemon.rc
@@ -457,7 +456,6 @@ vendor/lib64/vendor.qti.ims.rcssip@1.2.so
 vendor/lib64/vendor.qti.ims.rcsuce@1.0.so
 vendor/lib64/vendor.qti.ims.rcsuce@1.1.so
 vendor/lib64/vendor.qti.ims.rcsuce@1.2.so
-system_ext/lib64/vendor.qti.ImsRtpService-V1-ndk.so
 vendor/lib64/vendor.qti.imsrtpservice@3.0-service-Impl.so
 vendor/lib64/vendor.qti.imsrtpservice@3.0.so;MODULE_SUFFIX=-vendor
 
@@ -857,8 +855,6 @@ vendor/etc/init/vendor.qti.tftp.rc
 # Thermal
 vendor/lib64/libthermalclient.so
 vendor/lib64/liblmthermallistner.so
-vendor/lib64/libbitmlengine.so;DISABLE_CHECKELF
-vendor/lib64/libbitmlenginev2.so;DISABLE_CHECKELF
 
 # Time services
 vendor/app/TimeService/TimeService.apk
@@ -928,8 +924,6 @@ vendor/lib64/vendor.qti.hardware.vpp@2.0.so
 # VPU firmware
 vendor/firmware/vpu20_1v.mbn
 vendor/firmware/vpu20_1v_unsigned.mbn
-vendor/firmware/vpu20_4v.mbn
-vendor/firmware/vpu20_4v_unsigned.mbn
 
 # Widevine DRM
 vendor/bin/hw/android.hardware.drm@1.4-service.widevine

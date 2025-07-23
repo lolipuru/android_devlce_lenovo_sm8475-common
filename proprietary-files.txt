@@ -10,6 +10,9 @@ vendor/lib64/libadsprpc.so
 # ANT+
 vendor/lib64/hw/com.dsi.ant@1.0-impl.so
 
+# Audio (Config)
+vendor/etc/audio/sku_cape/audio_effects.conf
+
 # Audio (Listen)
 vendor/lib64/libcapiv2svacnnvendor.so
 vendor/lib64/libcapiv2svarnnvendor.so

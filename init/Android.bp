@@ -4,21 +4,6 @@
 //
 
 prebuilt_etc {
-    name: "fstab.qcom",
-    src: "etc/fstab.qcom",
-    vendor: true,
-    vendor_ramdisk_available: true,
-}
-
-prebuilt_etc {
-    name: "fstab-cust.qcom",
-    src: "etc/fstab-cust.qcom",
-    filename: "fstab.qcom",
-    vendor: true,
-    vendor_ramdisk_available: true,
-}
-
-prebuilt_etc {
     name: "init.qcom.rc",
     src: "etc/init.qcom.rc",
     sub_dir: "init/hw",
@@ -44,4 +29,38 @@ prebuilt_etc {
     filename: "ueventd.rc",
     src: "etc/ueventd.lenovo.rc",
     vendor: true,
+}
+
+// fstab
+soong_config_module_type {
+    name: "lenovo_rootdir_prebuilt_etc",
+    module_type: "prebuilt_etc",
+    config_namespace: "LENOVO_DEVICE",
+    variables: ["LENOVO_CUST_SUPPORT"],
+    properties: ["src"],
+}
+
+soong_config_string_variable {
+    name: "LENOVO_CUST_SUPPORT",
+    values: ["true", "false"],
+}
+
+lenovo_rootdir_prebuilt_etc {
+    name: "fstab.qcom",
+    soong_config_variables: {
+        LENOVO_CUST_SUPPORT: {
+            true: {
+                src: "etc/fstab-cust.qcom",
+            },
+            false: {
+                src: "etc/fstab.qcom",
+            },
+            conditions_default: {
+                src: "etc/fstab.qcom",
+            },
+        },
+    },
+    vendor: true,
+    ramdisk_available: true,
+    vendor_ramdisk_available: true,
 }

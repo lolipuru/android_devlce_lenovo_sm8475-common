@@ -69,8 +69,12 @@ PRODUCT_PACKAGES += \
     android.hardware.soundtrigger@2.3-impl:64 \
     vendor.qti.hardware.AGMIPC@1.0-service
 
+ifneq ($(TARGET_IS_ASPHALT),true)
 PRODUCT_PACKAGES += \
-    audio.primary.taro:64 \
+    audio.primary.taro:64
+endif
+
+PRODUCT_PACKAGES += \
     audio.r_submix.default:64 \
     audio.usb.default:64 \
     sound_trigger.primary.taro:64
@@ -233,18 +237,15 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.sensor.stepdetector.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/sku_cape/android.hardware.sensor.stepdetector.xml
 
 # Rootdir
-ifneq ($(filter asphalt,$(TARGET_DEVICE)),)
 PRODUCT_PACKAGES += \
     fstab.qcom
 
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/init/etc/fstab.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
-else
-PRODUCT_PACKAGES += \
-    fstab-cust.qcom
-
+ifeq ($(TARGET_IS_ASPHALT),true)
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/init/etc/fstab-cust.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
+else
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/init/etc/fstab.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
 endif
 
 PRODUCT_PACKAGES += \

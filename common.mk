@@ -70,6 +70,7 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.AGMIPC@1.0-service
 
 PRODUCT_PACKAGES += \
+    audio.primary.taro:64 \
     audio.r_submix.default:64 \
     audio.usb.default:64 \
     sound_trigger.primary.taro:64

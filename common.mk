@@ -284,8 +284,8 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     init.qcom.usb.rc.lenovo \
-    init.qcom.usb.sh.lenovo \
-    lenovo_usb_compositions.conf
+    init.qcom.usb.sh \
+    usb_compositions.conf
 
 PRODUCT_SOONG_NAMESPACES += vendor/qcom/opensource/usb/etc
 

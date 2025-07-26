@@ -16,6 +16,7 @@
 /vendor/bin/hw/dolbycodec2                                              u:object_r:mediacodec_exec:s0
 /vendor/bin/hw/dvs-hal-service                                          u:object_r:hal_dvs_default_exec:s0
 /vendor/bin/hw/vendor\.dolby\.media\.c2@1\.0-service                    u:object_r:mediacodec_exec:s0
+/vendor/bin/hw/vendor\.dolby\.media\.c2-default-service-dax             u:object_r:mediacodec_exec:s0
 /(vendor|system/vendor)/bin/hw/vendor\.dolby\.hardware\.dms@2\.0-service u:object_r:hal_dms_default_exec:s0
 
 # Fingerprint

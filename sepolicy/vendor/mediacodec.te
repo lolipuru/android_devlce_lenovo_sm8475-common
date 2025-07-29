@@ -1,0 +1,2 @@
+get_prop(mediacodec, graphics_config_prop)
+get_prop(mediacodec, exported_default_prop)

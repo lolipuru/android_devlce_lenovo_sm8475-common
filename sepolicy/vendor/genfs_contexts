@@ -28,6 +28,10 @@ genfscon sysfs /devices/platform/soc/soc:fpc1020/wakeup u:object_r:sysfs_wakeup:
 # Input
 genfscon sysfs /devices/virtual/input/input5/wakeup27             u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/virtual/input/input5/wakeup27/event_count u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,ucsi/power_supply/ucsi-source-psy-soc:qcom,pmic_glink:qcom,ucsi2/wakeup45 u:object_r:sysfs_wakeup:s0
+
+# Touchscreen
+genfscon proc /nvt_fw_status u:object_r:proc_touchscreen:s0
 
 # Vibrator
 genfscon sysfs /devices/platform/soc/a98000.i2c/i2c-[0-9]+/[0-9]+-005a/leds/vibrator(/.*)?            u:object_r:sysfs_vibrator:s0

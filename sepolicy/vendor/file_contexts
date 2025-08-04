@@ -10,6 +10,7 @@
 # Display
 /sys/class/backlight/panel0-hbm/brightness                              u:object_r:sysfs_graphics:s0
 /vendor/bin/hw/vendor\.lineage\.livedisplay@2\.1-service\.lenovo        u:object_r:hal_lineage_livedisplay_qti_exec:s0
+/vendor/bin/hw/vendor\.lineage\.touch-service\.lenovo                   u:object_r:hal_lineage_touch_default_exec:s0
 
 # Dolby
 /data/vendor/dolby(/.*)?                                                u:object_r:vendor_data_file:s0
@@ -41,3 +42,6 @@
 
 # Thermal
 /dev/lenovo_sys_temp                                                    u:object_r:thermal_device:s0
+
+# Touchpanel
+/sys/devices/virtual/touch/tp_dev/game_mode                             u:object_r:sysfs_touch_dev:s0

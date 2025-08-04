@@ -1,0 +1,4 @@
+service vendor.touch-hal /vendor/bin/hw/vendor.lineage.touch-service.lenovo
+    class hal
+    user system
+    group system

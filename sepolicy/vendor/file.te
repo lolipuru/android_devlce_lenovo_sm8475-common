@@ -1,2 +1,5 @@
 # Fingerprint
 type fpc_fingerprint_sysfs, fs_type, sysfs_type;
+
+# Touchscreen
+type sysfs_touch_dev, fs_type, sysfs_type;

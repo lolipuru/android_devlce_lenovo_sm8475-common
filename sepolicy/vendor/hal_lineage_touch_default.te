@@ -1,1 +1,2 @@
 allow hal_lineage_touch_default sysfs_touch_dev:file { read write open };
+allow hal_lineage_touch_default proc_gamemode:file { read write open };

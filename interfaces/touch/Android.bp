@@ -21,4 +21,22 @@ cc_binary {
         "libutils",
         "vendor.lineage.touch-V1-ndk",
     ],
+    defaults: ["lineage_touch_hal_defaults"],
+}
+
+soong_config_module_type {
+    name: "lineage_touch_hal_defaults",
+    module_type: "cc_defaults",
+    config_namespace: "LINEAGE_TOUCH_HAL",
+    value_variables: ["game_mode_path"],
+    properties: ["cppflags"],
+}
+
+lineage_touch_hal_defaults {
+    name: "lineage_touch_hal_defaults",
+    soong_config_variables: {
+        game_mode_path: {
+            cppflags: ["-DGAME_MODE_PATH=\"%s\""],
+        },
+    },
 }

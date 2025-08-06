@@ -20,7 +20,7 @@ namespace vendor {
 namespace lineage {
 namespace touch {
 
-static const std::string GAME_MODE_PATH = "/sys/devices/virtual/touch/tp_dev/game_mode";
+static const std::string gameModePath = GAME_MODE_PATH;
 
 ndk::ScopedAStatus HighTouchPollingRate::getEnabled(bool* _aidl_return) {
     std::string buf;

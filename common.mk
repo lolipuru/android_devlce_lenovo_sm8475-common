@@ -320,6 +320,11 @@ PRODUCT_PACKAGES += \
     android.hardware.thermal-service.qti
 
 # Touchscreen
+ifeq ($(TARGET_IS_ASPHALT),true)
+$(call soong_config_set, LINEAGE_TOUCH_HAL, game_mode_path, /proc/game_mode)
+else
+$(call soong_config_set, LINEAGE_TOUCH_HAL, game_mode_path, /sys/devices/virtual/touch/tp_dev/game_mode)
+endif
 PRODUCT_PACKAGES += \
     vendor.lineage.touch-service.lenovo
 

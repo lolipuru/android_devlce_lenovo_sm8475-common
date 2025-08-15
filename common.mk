@@ -231,6 +231,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     FrameworkResCommon \
     SystemUIResCommon \
+    SettingsOverlayCommon \
     WifiResTargetCommon
 
 # Partitions

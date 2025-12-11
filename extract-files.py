@@ -57,6 +57,12 @@ blob_fixups: blob_fixups_user_type = {
         .add_needed('android.hardware.security.rkp-V1-ndk.so'),
     'vendor/lib64/vendor.libdpmframework.so': blob_fixup()
         .add_needed('libhidlbase_shim.so'),
+    (
+        'vendor/lib64/libsnapdragoncolor-manager.so',
+        'vendor/lib64/libdpps.so',
+        'vendor/bin/poweropt-service',
+    ): blob_fixup()
+        .replace_needed('libtinyxml2.so', 'libtinyxml2_1.so'),
 }  # fmt: skip
 
 module = ExtractUtilsModule(

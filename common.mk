@@ -202,7 +202,7 @@ PRODUCT_COPY_FILES += \
 
 # LiveDisplay
 PRODUCT_PACKAGES += \
-    vendor.lineage.livedisplay@2.1-service.lenovo
+    vendor.lineage.livedisplay-service.lenovo
 
 ifneq ($(TARGET_IS_ASPHALT),true)
 # NFC

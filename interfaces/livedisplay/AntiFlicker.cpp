@@ -1,66 +1,53 @@
 /*
- * Copyright (C) 2022 The LineageOS Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-FileCopyrightText: 2022-2025 The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 #define LOG_TAG "AntiFlickerService"
 
-#include <fstream>
 #include <android-base/file.h>
-#include <android-base/logging.h>
 #include <android-base/strings.h>
+#include <android-base/logging.h>
+#include <livedisplay/lenovo/AntiFlicker.h>
+#include <fstream>
 
-#include "AntiFlicker.h"
-
+namespace aidl {
 namespace vendor {
 namespace lineage {
 namespace livedisplay {
-namespace V2_1 {
-namespace implementation {
+namespace lenovo {
 
 static constexpr const char* kDcDimmingPath = "/sys/class/backlight/panel0-hbm/brightness";
 
 bool AntiFlicker::isSupported() {
-    std::ofstream dc_dimming_file(kDcDimmingPath);
-    if (!dc_dimming_file.is_open()) {
-        LOG(ERROR) << "Failed to open " << kDcDimmingPath << ", error=" << errno
-                   << " (" << strerror(errno) << ")";
-    }
-    return !dc_dimming_file.fail();
+    std::fstream file(kDcDimmingPath, file.in | file.out);
+    return file.good();
 }
 
-Return<bool> AntiFlicker::isEnabled() {
-    std::ifstream dc_dimming_file(kDcDimmingPath);
+ndk::ScopedAStatus AntiFlicker::getEnabled(bool* _aidl_return) {
+    std::ifstream file(kDcDimmingPath);
     int result = -1;
-    dc_dimming_file >> result;
-    return !dc_dimming_file.fail() && result > 0;
-}
-
-Return<bool> AntiFlicker::setEnabled(bool enabled) {
-    std::ofstream dc_dimming_file(kDcDimmingPath);
-    if (enabled) {
-        dc_dimming_file << "19";
-    } else {
-        dc_dimming_file << "18";
+    if (file.fail()) {
+        return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
     }
-    if (dc_dimming_file.fail())
-        LOG(ERROR) << "Failed to write " << kDcDimmingPath;
-    return !dc_dimming_file.fail();
+    file >> result;
+    LOG(DEBUG) << "Got result " << result << " fail " << file.fail();
+    *_aidl_return = result > 0;
+    return ndk::ScopedAStatus::ok();
 }
 
-}  // namespace implementation
-}  // namespace V2_1
+ndk::ScopedAStatus AntiFlicker::setEnabled(bool enabled) {
+    std::ofstream file(kDcDimmingPath);
+    file << (enabled ? "19" : "18");
+    if (file.fail()) {
+        LOG(DEBUG) << "setEnabled fail " << file.fail();
+        return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+    }
+    return ndk::ScopedAStatus::ok();
+}
+
+}  // namespace lenovo
 }  // namespace livedisplay
 }  // namespace lineage
 }  // namespace vendor
+}  // namespace aidl

@@ -3,6 +3,7 @@ type thermal_device, dev_type;
 
 # Touchscreen
 type proc_touchscreen, proc_type, fs_type;
+type proc_gamemode, proc_type, fs_type;
 
 # Vibrator
 type aac_richtap_dev_device, dev_type;

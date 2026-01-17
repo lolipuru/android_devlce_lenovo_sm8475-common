@@ -2,4 +2,5 @@
 
 Currently supported devices
 - Lenovo Legion Y70 (Halo)
+- Lenovo Legion Y90 (Diablo, SM8450)
 - Lenovo Legion Y700 (2023/2nd gen) (Asphalt)

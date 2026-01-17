@@ -9,7 +9,7 @@
 
 # Display
 /sys/class/backlight/panel0-hbm/brightness                              u:object_r:sysfs_graphics:s0
-/vendor/bin/hw/vendor\.lineage\.livedisplay@2\.1-service\.lenovo        u:object_r:hal_lineage_livedisplay_qti_exec:s0
+/vendor/bin/hw/vendor\.lineage\.livedisplay-service\.lenovo             u:object_r:hal_lineage_livedisplay_qti_exec:s0
 /vendor/bin/hw/vendor\.lineage\.touch-service\.lenovo                   u:object_r:hal_lineage_touch_default_exec:s0
 
 # Dolby

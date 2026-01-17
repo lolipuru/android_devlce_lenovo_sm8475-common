@@ -1,55 +1,81 @@
 /*
- * Copyright (C) 2022 The LineageOS Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
  */
 
-#define LOG_TAG "vendor.lineage.livedisplay@2.1-service.lenovo_halo"
+#define LOG_TAG "vendor.lineage.livedisplay-service-lenovo"
 
 #include <android-base/logging.h>
+#include <android/binder_manager.h>
+#include <android/binder_process.h>
 #include <binder/ProcessState.h>
-#include <hidl/HidlTransportSupport.h>
-#include "AntiFlicker.h"
-#include "SunlightEnhancement.h"
+#include <livedisplay/lenovo/AntiFlicker.h>
+#include <livedisplay/lenovo/SunlightEnhancement.h>
+#include <livedisplay/sdm/PictureAdjustment.h>
 
-using ::vendor::lineage::livedisplay::V2_1::implementation::AntiFlicker;
-using ::vendor::lineage::livedisplay::V2_1::implementation::SunlightEnhancement;
+using ::aidl::vendor::lineage::livedisplay::lenovo::SunlightEnhancement;
+using ::aidl::vendor::lineage::livedisplay::lenovo::AntiFlicker;
+using ::aidl::vendor::lineage::livedisplay::sdm::PictureAdjustment;
+using ::aidl::vendor::lineage::livedisplay::sdm::SDMController;
 
 int main() {
-    android::sp<SunlightEnhancement> sunlightEnhancement = new SunlightEnhancement();
-    android::sp<AntiFlicker> antiFlicker = new AntiFlicker();
+    android::ProcessState::self()->setThreadPoolMaxThreadCount(1);
+    android::ProcessState::self()->startThreadPool();
 
-    android::hardware::configureRpcThreadpool(1, true /*callerWillJoin*/);
+    std::shared_ptr<SDMController> controller = std::make_shared<SDMController>();
 
-    if (antiFlicker->isSupported()) {
-        if (antiFlicker->registerAsService() != android::OK) {
-            LOG(ERROR) << "Cannot register antiflicker HAL service.";
-            return 1;
+    // AIDL frontend
+    std::shared_ptr<AntiFlicker> af = ndk::SharedRefBase::make<AntiFlicker>();
+    std::shared_ptr<SunlightEnhancement> se = ndk::SharedRefBase::make<SunlightEnhancement>();
+    std::shared_ptr<PictureAdjustment> pa = ndk::SharedRefBase::make<PictureAdjustment>(controller);
+    binder_status_t status;
+
+    LOG(INFO) << "LiveDisplay HAL service is starting.";
+
+    if (af == nullptr) {
+        LOG(ERROR) << "Can not create an instance of LiveDisplay HAL AntiFlicker Iface,"
+                   << " exiting.";
+        goto shutdown;
+    }
+
+    if (se == nullptr) {
+        LOG(ERROR) << "Can not create an instance of LiveDisplay HAL SunlightEnhancement Iface, "
+                      "exiting.";
+        goto shutdown;
+    }
+
+    if (af->isSupported()) {
+        std::string instance = std::string() + AntiFlicker::descriptor + "/default";
+        binder_status_t status = AServiceManager_addService(af->asBinder().get(), instance.c_str());
+        if (status != STATUS_OK) {
+            LOG(ERROR) << "Cannot register AntiFlicker HAL service.";
+            goto shutdown;
         }
     }
 
-    if (sunlightEnhancement->isSupported()) {
-        if (sunlightEnhancement->registerAsService() != android::OK) {
-            LOG(ERROR) << "Cannot register sunlight enhancement HAL service.";
-	    return 1;
-	}
+    if (se->isSupported()) {
+        std::string instance = std::string(SunlightEnhancement::descriptor) + "/default";
+        status = AServiceManager_addService(se->asBinder().get(), instance.c_str());
+        if (status != STATUS_OK) {
+            LOG(ERROR) << "Cannot register SunlightEnhancement HAL service.";
+            goto shutdown;
+        }
+    }
+
+    if (pa) {
+        std::string instance = std::string(PictureAdjustment::descriptor) + "/default";
+        status = AServiceManager_addService(pa->asBinder().get(), instance.c_str());
+        if (status != STATUS_OK) {
+            LOG(ERROR) << "Cannot register PictureAdjustment HAL service.";
+            goto shutdown;
+        }
     }
 
     LOG(INFO) << "LiveDisplay HAL service is ready.";
+    ABinderProcess_joinThreadPool();
 
-    android::hardware::joinRpcThreadpool();
-
-    LOG(ERROR) << "LiveDisplay HAL service failed to join thread pool.";
-
-    return 1;
+shutdown:
+    // In normal operation, we don't expect the thread pool to shutdown
+    LOG(ERROR) << "LiveDisplay HAL service is shutting down.";
+    return EXIT_FAILURE;
 }

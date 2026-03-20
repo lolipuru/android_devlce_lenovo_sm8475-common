@@ -267,6 +267,8 @@ PRODUCT_PACKAGES += \
     fstab.qcom
 
 ifeq ($(TARGET_IS_ASPHALT),true)
+$(call soong_config_set_bool,recovery,target_recovery_uses_qti_drm,true)
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/init/etc/fstab-cust.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
 else

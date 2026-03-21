@@ -69,7 +69,8 @@ namespace vibrator {
 
 #define test_bit(bit, array)    ((array)[(bit)/8] & (1<<((bit)%8)))
 
-static const char LED_DEVICE[] = "/sys/class/leds/vibrator";
+static const char LED_DEVICE_L[] = "/sys/class/leds/vibrator_l";
+static const char LED_DEVICE_R[] = "/sys/class/leds/vibrator_r";
 
 InputFFDevice::InputFFDevice()
 {
@@ -337,7 +338,14 @@ LedVibratorDevice::LedVibratorDevice() {
 
     mDetected = false;
 
-    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE, "activate");
+    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_L, "activate");
+    fd = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
+    if (fd < 0) {
+        ALOGE("open %s failed, errno = %d", devicename, errno);
+        return;
+    }
+
+    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_R, "activate");
     fd = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
     if (fd < 0) {
         ALOGE("open %s failed, errno = %d", devicename, errno);
@@ -345,6 +353,33 @@ LedVibratorDevice::LedVibratorDevice() {
     }
 
     mDetected = true;
+}
+
+bool LedVibratorDevice::check_node() {
+    char devicename[PATH_MAX];
+    int fd_l;
+    int fd_r;
+
+    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_L, "activate");
+    fd_l = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
+    if (fd_l < 0) {
+        ALOGE("open %s failed, errno = %d", devicename, errno);
+        return false;
+    }
+
+    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_R, "activate");
+    fd_r = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
+    if (fd_r < 0) {
+        ALOGE("open %s failed, errno = %d", devicename, errno);
+        return false;
+    }
+
+    ALOGD("checkout vibrator node true");
+
+    close(fd_l);
+    close(fd_r);
+
+    return true;
 }
 
 int LedVibratorDevice::write_value(const char *file, const char *value) {
@@ -381,18 +416,49 @@ int LedVibratorDevice::on(int32_t timeoutMs) {
     char value[32];
     int ret;
 
-    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "state");
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_L, "activate_mode");
     ret = write_value(file, "1");
-    if (ret < 0)
-       goto error;
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_R, "activate_mode");
+    ret = write_value(file, "1");
+    
+	if (timeoutMs > 0 && timeoutMs < 20) {
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_L, "index");
+		ret = write_value(file, "1");
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_R, "index");
+		ret = write_value(file, "1");
+	} else if(timeoutMs >= 20 && timeoutMs <= 30) {
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_L, "index");
+		ret = write_value(file, "6");
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_R, "index");
+		ret = write_value(file, "6");
+	} else if(timeoutMs > 30 && timeoutMs <= 60) {
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_L, "index");
+		ret = write_value(file, "4");
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_R, "index");
+		ret = write_value(file, "4");
+    } else {
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_L, "activate_mode");
+		ret = write_value(file, "5");
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_R, "activate_mode");
+		ret = write_value(file, "5");
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_L, "index");
+		ret = write_value(file, "10");
+		snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_R, "index");
+		ret = write_value(file, "10");
+		if (ret < 0)
+		   goto error;
+    }
 
-    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "duration");
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_L, "duration");
     snprintf(value, sizeof(value), "%u\n", timeoutMs);
     ret = write_value(file, value);
-    if (ret < 0)
-       goto error;
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_R, "duration");
+    snprintf(value, sizeof(value), "%u\n", timeoutMs);
+    ret = write_value(file, value);
 
-    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "activate");
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_L, "activate");
+    ret = write_value(file, "1");
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_R, "activate");
     ret = write_value(file, "1");
     if (ret < 0)
        goto error;
@@ -406,12 +472,7 @@ error:
 
 int LedVibratorDevice::off()
 {
-    char file[PATH_MAX];
-    int ret;
-
-    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "activate");
-    ret = write_value(file, "0");
-    return ret;
+    return 0;
 }
 
 ndk::ScopedAStatus Vibrator::getCapabilities(int32_t* _aidl_return) {

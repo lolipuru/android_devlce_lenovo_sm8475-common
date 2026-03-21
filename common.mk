@@ -366,8 +366,11 @@ PRODUCT_PACKAGES += \
     vndservicemanager
 
 # Vibrator
+ifeq ($(TARGET_IS_ASPHALT),true)
 PRODUCT_PACKAGES += \
-    vendor.qti.hardware.vibrator.service-lenovo
+    vendor.qti.hardware.vibrator.service-lenovo \
+    vendor.qti.hardware.vibrator_dual-service
+endif
 
 PRODUCT_COPY_FILES += \
     vendor/qcom/opensource/vibrator/excluded-input-devices.xml:$(TARGET_COPY_OUT_VENDOR)/etc/excluded-input-devices.xml

@@ -277,6 +277,7 @@ PRODUCT_COPY_FILES += \
 endif
 
 PRODUCT_PACKAGES += \
+    init.qcom.post_boot.sh \
     init.qcom.rc \
     init.qcom.recovery.rc \
     init.target.rc \

@@ -1,0 +1,2 @@
+# Vibrator
+vendor.qti.hardware.vibrator_dual.device.IVibratorDual/default    u:object_r:hal_vibrator_service:s0

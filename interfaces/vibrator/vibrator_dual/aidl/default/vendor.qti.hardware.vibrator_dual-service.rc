@@ -1,0 +1,4 @@
+service vendor.qti.vibrator_dual /vendor/bin/hw/vendor.qti.hardware.vibrator_dual-service
+    class hal
+    user system
+    group system input

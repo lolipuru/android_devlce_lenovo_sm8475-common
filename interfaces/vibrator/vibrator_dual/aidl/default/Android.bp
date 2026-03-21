@@ -1,0 +1,20 @@
+cc_binary {
+    name: "vendor.qti.hardware.vibrator_dual-service",
+    vendor: true,
+    relative_install_path: "hw",
+    init_rc: ["vendor.qti.hardware.vibrator_dual-service.rc"],
+    vintf_fragments: ["vendor.qti.hardware.vibrator_dual-service.xml"],
+    
+    srcs: [
+        "VibratorDualService.cpp",
+        "main.cpp",
+    ],
+
+    shared_libs: [
+        "libbase",
+        "liblog",
+        "libutils",
+        "libbinder_ndk",
+        "vendor.qti.hardware.vibrator_dual.device-V1-ndk", 
+    ],
+}

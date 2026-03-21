@@ -1,0 +1,26 @@
+aidl_interface {
+    name: "vendor.qti.hardware.vibrator_dual.device",
+    vendor_available: true,
+    srcs: ["vendor/qti/hardware/vibrator_dual/device/*.aidl"],
+    stability: "vintf",
+    owner: "qti",
+    backend: {
+        cpp: {
+            enabled: true,
+        },
+        java: {
+            sdk_version: "module_current",
+        },
+        ndk: {
+            enabled: true,
+        },
+    },
+    versions_with_info: [
+        {
+            version: "1",
+            imports: [],
+        },
+    ],
+    frozen: true,
+
+}

@@ -32,18 +32,35 @@
 #include <android-base/logging.h>
 #include <android/binder_manager.h>
 #include <android/binder_process.h>
+#include <android-base/properties.h>
+#include <thread>
 
 #include "Vibrator.h"
+#include "richtap/RichtapVibrator.h"
 
+using aidl::vendor::aac::hardware::richtap::vibrator::RichtapVibrator;
 using aidl::android::hardware::vibrator::Vibrator;
 
+constexpr char kHapticCalibrateProp[] = "vendor.haptic.calibrate.done";
 int main() {
     ABinderProcess_setThreadPoolMaxThreadCount(0);
     std::shared_ptr<Vibrator> vib = ndk::SharedRefBase::make<Vibrator>();
+    ndk::SpAIBinder vibBinder = vib->asBinder();
+
+    std::shared_ptr<RichtapVibrator> cvib = ndk::SharedRefBase::make<RichtapVibrator>();
+
+    CHECK(STATUS_OK == AIBinder_setExtension(vibBinder.get(), cvib->asBinder().get()));
 
     const std::string instance = std::string() + Vibrator::descriptor + "/default";
     binder_status_t status = AServiceManager_addService(vib->asBinder().get(), instance.c_str());
     CHECK(status == STATUS_OK);
+
+    std::thread initThread([&]() {
+        using std::literals::chrono_literals::operator""s;
+        ::android::base::WaitForProperty(kHapticCalibrateProp, "1", 500s);
+        cvib->init(nullptr);
+    });
+    initThread.detach();
 
     ABinderProcess_joinThreadPool();
     return EXIT_FAILURE;  // should not reach

@@ -30,13 +30,17 @@ cc_binary {
     cflags: Common_CFlags,
     srcs: [
         "service.cpp",
+        "richtap/RichtapVibrator.cpp",
     ],
     shared_libs: [
+        "liblog",
         "libcutils",
         "libutils",
         "libbase",
         "libbinder_ndk",
         "android.hardware.vibrator-V2-ndk",
         "vendor.qti.hardware.vibrator.impl-lenovo",
+        "vendor.aac.hardware.richtap.vibrator-V1-ndk",
+        "libaacvibrator",
     ],
 }

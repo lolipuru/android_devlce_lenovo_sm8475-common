@@ -3,5 +3,8 @@ service vendor.qti.vibrator /vendor/bin/hw/vendor.qti.hardware.vibrator.service-
     user system
     group system input
 
+on property:sys.boot_completed=1
+    setprop vendor.haptic.calibrate.done 1
+
 on late-init
     write /sys/class/leds/vibrator/trigger "transient"

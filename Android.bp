@@ -6,6 +6,7 @@
 
 soong_namespace {
     imports: [
+        "vendor/lenovo/sm8475-common",
         "hardware/google/interfaces",
         "hardware/google/pixel",
         "hardware/lineage/interfaces/power-libperfmgr",

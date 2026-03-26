@@ -822,6 +822,9 @@ vendor/etc/init/trusteduilistener.rc
 # Ueventd
 odm/ueventd.rc
 
+# Vibrator
+vendor/lib64/libaacvibrator.so
+
 # VPP
 vendor/bin/hw/qconfigservice
 vendor/bin/vppservice

@@ -4,6 +4,8 @@
      SPDX-License-Identifier: BSD-3-Clause
 -->
 <resources>
+    <!-- Whether device supports double tap to wake -->
+    <bool name="config_supportDoubleTapWake">true</bool>
 
     <!-- Flag indicating whether we should enable the automatic brightness.
          Software implementation will be used if config_hardware_auto_brightness_available is not set -->

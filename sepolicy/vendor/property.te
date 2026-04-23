@@ -1,5 +1,2 @@
-# Dolby
-vendor_public_prop(vendor_dolbyv_prop);
-
 # NVRAM
 vendor_public_prop(nvram_lenovo_prop);

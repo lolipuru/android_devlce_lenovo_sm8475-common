@@ -6,10 +6,6 @@ com.fingerprints.extension::IFingerprintSenseTouch                      u:object
 com.fingerprints.extension::IFpcFingerprintAuthenticator                u:object_r:hal_fingerprint_hwservice:s0
 vendor.goodix.extend.service::IGoodixFPExtendService                    u:object_r:hal_fingerprint_hwservice:s0
 
-# Dolby
-vendor.dolby.hardware.dms::IDms                                         u:object_r:hal_dms_hwservice:s0
-vendor.dolby.dvs::IDvs                                                  u:object_r:hal_dvs_hwservice:s0
-
 # IFAA
 vendor.lenovo.hardware.ifaa::IIFAADevice                                   u:object_r:hal_ifaa_hwservice:s0
 

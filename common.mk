@@ -146,10 +146,7 @@ PRODUCT_PACKAGES += \
     android.hardware.graphics.mapper@4.0-impl-qti-display \
     vendor.qti.hardware.display.allocator-service \
     vendor.qti.hardware.display.demura-service \
-    vendor.qti.hardware.display.composer-service.rc \
-    vendor.qti.hardware.display.composer-service.xml \
-    init.qti.display_boot.rc \
-    init.qti.display_boot.sh
+    vendor.qti.hardware.display.composer-service
 
 PRODUCT_PACKAGES += \
     init.qti.display_boot.rc \

@@ -1,8 +1,26 @@
 Common_CFlags = ["-Wall"]
 Common_CFlags += ["-Werror"]
 
+soong_config_module_type {
+    name: "lenovo_vibrator_cc_defaults",
+    module_type: "cc_defaults",
+    config_namespace: "lenovo_vibrator",
+    bool_variables: ["use_calibration"],
+    properties: ["cflags"],
+}
+
+lenovo_vibrator_cc_defaults {
+    name: "lenovo_vibrator_defaults",
+    soong_config_variables: {
+        use_calibration: {
+            cflags: ["-DTARGET_USE_CALIBRATION"],
+        },
+    },
+}
+
 cc_library_shared {
     name: "vendor.qti.hardware.vibrator.impl-lenovo",
+    defaults: ["lenovo_vibrator_defaults"],
     vendor: true,
     cflags: Common_CFlags,
     srcs: [
@@ -21,6 +39,7 @@ cc_library_shared {
 
 cc_binary {
     name: "vendor.qti.hardware.vibrator.service-lenovo",
+    defaults: ["lenovo_vibrator_defaults"],
     vendor: true,
     relative_install_path: "hw",
     init_rc: ["vendor.qti.hardware.vibrator.service-lenovo.rc"],

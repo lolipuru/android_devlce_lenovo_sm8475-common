@@ -368,10 +368,16 @@ PRODUCT_PACKAGES += \
 
 # Vibrator
 ifeq ($(TARGET_IS_ASPHALT),true)
+$(call soong_config_set,lenovo_vibrator,use_calibration,false)
+$(call soong_config_set,vibrator_dual,use_calibration,false)
+else
+$(call soong_config_set,lenovo_vibrator,use_calibration,true)
+$(call soong_config_set,vibrator_dual,use_calibration,true)
+endif
+
 PRODUCT_PACKAGES += \
     vendor.qti.hardware.vibrator.service-lenovo \
     vendor.qti.hardware.vibrator_dual-service
-endif
 
 PRODUCT_COPY_FILES += \
     vendor/qcom/opensource/vibrator/excluded-input-devices.xml:$(TARGET_COPY_OUT_VENDOR)/etc/excluded-input-devices.xml

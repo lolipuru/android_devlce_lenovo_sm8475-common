@@ -26,6 +26,12 @@ private:
     int right_on(uint32_t innerId, uint32_t timeoutMs, int amplitude);
     int left_off();
     int right_off();
+#ifdef TARGET_USE_CALIBRATION
+    void loadCalibrationData();
+    int read_value(const char *file, char *value);
+    int write_persist_value(const char *file, const char *value);
+    int runCalibration(int id);
+#endif
 };
 
 } // namespace

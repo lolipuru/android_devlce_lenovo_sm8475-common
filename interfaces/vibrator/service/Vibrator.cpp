@@ -69,8 +69,12 @@ namespace vibrator {
 
 #define test_bit(bit, array)    ((array)[(bit)/8] & (1<<((bit)%8)))
 
+#ifdef TARGET_USE_CALIBRATION
+static const char LED_DEVICE[] = "/sys/class/leds/vibrator";
+#else
 static const char LED_DEVICE_L[] = "/sys/class/leds/vibrator_l";
 static const char LED_DEVICE_R[] = "/sys/class/leds/vibrator_r";
+#endif
 
 InputFFDevice::InputFFDevice()
 {
@@ -338,6 +342,14 @@ LedVibratorDevice::LedVibratorDevice() {
 
     mDetected = false;
 
+#ifdef TARGET_USE_CALIBRATION
+    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE, "activate");
+    fd = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
+    if (fd < 0) {
+        ALOGE("open %s failed, errno = %d", devicename, errno);
+        return;
+    }
+#else
     snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_L, "activate");
     fd = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
     if (fd < 0) {
@@ -351,10 +363,12 @@ LedVibratorDevice::LedVibratorDevice() {
         ALOGE("open %s failed, errno = %d", devicename, errno);
         return;
     }
+#endif
 
     mDetected = true;
 }
 
+#ifndef TARGET_USE_CALIBRATION
 bool LedVibratorDevice::check_node() {
     char devicename[PATH_MAX];
     int fd_l;
@@ -381,6 +395,7 @@ bool LedVibratorDevice::check_node() {
 
     return true;
 }
+#endif
 
 int LedVibratorDevice::write_value(const char *file, const char *value) {
     int fd;
@@ -416,6 +431,23 @@ int LedVibratorDevice::on(int32_t timeoutMs) {
     char value[32];
     int ret;
 
+#ifdef TARGET_USE_CALIBRATION
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "state");
+    ret = write_value(file, "1");
+    if (ret < 0)
+       goto error;
+
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "duration");
+    snprintf(value, sizeof(value), "%u\n", timeoutMs);
+    ret = write_value(file, value);
+    if (ret < 0)
+       goto error;
+
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "activate");
+    ret = write_value(file, "1");
+    if (ret < 0)
+       goto error;
+#else
     snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_L, "activate_mode");
     ret = write_value(file, "1");
     snprintf(file, sizeof(file), "%s/%s", LED_DEVICE_R, "activate_mode");
@@ -462,6 +494,7 @@ int LedVibratorDevice::on(int32_t timeoutMs) {
     ret = write_value(file, "1");
     if (ret < 0)
        goto error;
+#endif
 
     return 0;
 
@@ -472,7 +505,16 @@ error:
 
 int LedVibratorDevice::off()
 {
+#ifdef TARGET_USE_CALIBRATION
+    char file[PATH_MAX];
+    int ret;
+
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "activate");
+    ret = write_value(file, "0");
+    return ret;
+#else
     return 0;
+#endif
 }
 
 ndk::ScopedAStatus Vibrator::getCapabilities(int32_t* _aidl_return) {

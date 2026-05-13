@@ -7,6 +7,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#ifdef TARGET_USE_CALIBRATION
+#include <android-base/properties.h>
+#endif
+
 namespace aidl::vendor::qti::hardware::vibrator_dual::device {
 
 #define RAM_MAX_ID (54)
@@ -14,8 +18,16 @@ namespace aidl::vendor::qti::hardware::vibrator_dual::device {
 #define RTP_RIGHT_SHIFT (300)
 #define AMPLITUDE_SHIF  (12)
 #define AMPLITUDE_MASK  (0xfff)
+
+#ifdef TARGET_USE_CALIBRATION
+#define CALI_PATH_1 "/mnt/vendor/persist/haptic/aw_cali_lra_1.txt"
+#define CALI_PATH_2 "/mnt/vendor/persist/haptic/aw_cali_lra_2.txt"
+#define SYSFS_CALI_NODE "/sys/class/leds/vibrator_aw8697x/calibrate"
+#define SYSFS_VIB_MAIN "/sys/class/leds/vibrator"
+#else
 static const char LED_DEVICE_L[] = "/sys/class/leds/vibrator_l";
 static const char LED_DEVICE_R[] = "/sys/class/leds/vibrator_r";
+#endif
 
 static unsigned int maplist[RAM_MAX_ID]{
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -28,12 +40,134 @@ static unsigned int maplist[RAM_MAX_ID]{
 
 VibratorDualService::VibratorDualService() {
     LOG(INFO) << "VibratorDual AIDL Service initialized";
+#ifdef TARGET_USE_CALIBRATION
+    loadCalibrationData();
+#endif
 }
+
+#ifdef TARGET_USE_CALIBRATION
+void VibratorDualService::loadCalibrationData() {
+    char cali_data[64] = {0};
+
+    if (read_value(CALI_PATH_1, cali_data) == 0) {
+        LOG(INFO) << "Vibrator1 Read Persist Cali Data: " << cali_data;
+        write_value("/sys/class/leds/vibrator/cali_lra", cali_data);
+    } else {
+        LOG(WARNING) << "Vibrator1 read persist file failed, loading default 0xff";
+        write_value("/sys/class/leds/vibrator/cali_lra", "0xff");
+    }
+
+    memset(cali_data, 0, sizeof(cali_data));
+    if (read_value(CALI_PATH_2, cali_data) == 0) {
+        LOG(INFO) << "Vibrator2 Read Persist Cali Data: " << cali_data;
+        write_value("/sys/class/leds/vibrator_aw8697x/cali_lra", cali_data);
+    } else {
+        LOG(WARNING) << "Vibrator2 read persist file failed, loading default 0xff";
+        write_value("/sys/class/leds/vibrator_aw8697x/cali_lra", "0xff");
+    }
+}
+
+int VibratorDualService::read_value(const char *file, char *value) {
+    int fd;
+    ssize_t ret;
+
+    fd = TEMP_FAILURE_RETRY(open(file, O_RDWR));
+    if (fd < 0) {
+        ALOGE("open %s failed, errno = %d", file, errno);
+        return -errno;
+    }
+
+    ret = TEMP_FAILURE_RETRY(read(fd, value, 64));
+    if (ret >= 0) {
+        if (ret > 0 && value[ret - 1] == '\n') {
+            value[ret - 1] = '\0';
+        } else {
+            value[ret] = '\0';
+        }
+        ret = 0;
+    } else {
+        ret = -errno;
+    }
+
+    errno = 0;
+    close(fd);
+    return ret;
+}
+
+int VibratorDualService::write_persist_value(const char *file, const char *value) {
+    return write_value(file, value);
+}
+
+int VibratorDualService::runCalibration(int id) {
+    const char* path = (id == 1) ? CALI_PATH_1 : CALI_PATH_2;
+    const char* prop = (id == 1) ? "odm.haptic1.cali" : "odm.haptic2.cali";
+    
+    LOG(INFO) << "Vibrator" << id << " Start Cali";
+    
+    if (write_value(SYSFS_CALI_NODE, "1") != 0) {
+        LOG(ERROR) << "Vibrator" << id << " write cali failed";
+        return -1;
+    }
+
+    char cali_data[64] = {0};
+    if (read_value(SYSFS_CALI_NODE, cali_data) != 0) {
+        LOG(ERROR) << "Vibrator" << id << " read cali failed";
+        return -1;
+    }
+    LOG(INFO) << "Vibrator" << id << " Read Cali : " << cali_data;
+
+    write_persist_value(path, cali_data);
+    
+    char verify_data[64] = {0};
+    read_value(path, verify_data);
+    
+    if (strcmp(cali_data, verify_data) == 0) {
+        LOG(INFO) << "Vibrator" << id << " Cali Pass";
+        android::base::SetProperty(prop, "true");
+        return 0;
+    } else {
+        LOG(ERROR) << "Vibrator" << id << " Cali Failed";
+        android::base::SetProperty(prop, "false");
+        return -1;
+    }
+}
+#endif
 
 ndk::ScopedAStatus VibratorDualService::onDual(int32_t t, int32_t vibType, int32_t innerId, 
                                               int32_t innerIdSub, int32_t timeoutMs, 
                                               int32_t timeoutMsSub, Status* _aidl_return) {
+
+    LOG(INFO) << "onDual() vibType=" << vibType << " id=" << innerId << " timeout=" << timeoutMs;
+
+#ifdef TARGET_USE_CALIBRATION
+    if (innerId == 0 && innerIdSub == 0xFFF) {
+        runCalibration(2);
+        *_aidl_return = Status::OK;
+        return ndk::ScopedAStatus::ok();
+    } else if (innerId == 0xFFF && innerIdSub == 0) {
+        runCalibration(1);
+        *_aidl_return = Status::OK;
+        return ndk::ScopedAStatus::ok();
+    }
+    char path[128];
+    snprintf(path, sizeof(path), "%s/double_duration", SYSFS_VIB_MAIN);
     
+    int fd = TEMP_FAILURE_RETRY(open(path, O_WRONLY));
+    if (fd >= 0) {
+        uint32_t payload[5] = { (uint32_t)vibType, (uint32_t)innerId, (uint32_t)innerIdSub, (uint32_t)timeoutMs, (uint32_t)timeoutMsSub };
+        ssize_t w = TEMP_FAILURE_RETRY(write(fd, payload, sizeof(payload)));
+        close(fd);
+        if (w != sizeof(payload)) {
+            ALOGE("write double_duration failed");
+        }
+    } else {
+        ALOGE("open %s failed, errno = %d", path, errno);
+    }
+    
+    *_aidl_return = Status::OK;
+    return ndk::ScopedAStatus::ok();
+
+#else
     int amplitude = (int)((innerId >> AMPLITUDE_SHIF) & AMPLITUDE_MASK);
     innerId &= AMPLITUDE_MASK;
     int amplitudeSub = (int)((innerIdSub >> AMPLITUDE_SHIF) & AMPLITUDE_MASK);
@@ -66,11 +200,22 @@ ndk::ScopedAStatus VibratorDualService::onDual(int32_t t, int32_t vibType, int32
 
     *_aidl_return = Status::OK;
     return ndk::ScopedAStatus::ok();
+#endif
 }
 
 ndk::ScopedAStatus VibratorDualService::dualCancel(int32_t vibType, Status* _aidl_return) {
     LOG(DEBUG) << "Dual_Cancel " << vibType;
     
+#ifdef TARGET_USE_CALIBRATION
+    char path[128];
+    char value[24];
+    snprintf(path, sizeof(path), "%s/dual_cancel", SYSFS_VIB_MAIN);
+    snprintf(value, sizeof(value), "%u", vibType);
+    write_value(path, value);
+    
+    *_aidl_return = Status::OK;
+    return ndk::ScopedAStatus::ok();
+#else
     if (!device_exists(LED_DEVICE_L) || !device_exists(LED_DEVICE_R)) {
         *_aidl_return = Status::UNKNOWN_ERROR;
         return ndk::ScopedAStatus::ok();
@@ -94,6 +239,7 @@ ndk::ScopedAStatus VibratorDualService::dualCancel(int32_t vibType, Status* _aid
 
     *_aidl_return = Status::OK;
     return ndk::ScopedAStatus::ok();
+#endif
 }
 
 bool VibratorDualService::device_exists(const char *file)
@@ -107,6 +253,7 @@ bool VibratorDualService::device_exists(const char *file)
          ALOGE("open %s failed, errno = %d", file, errno);
         return false;
     }
+    close(fd);
     return true;
 }
 
@@ -139,6 +286,7 @@ int VibratorDualService::write_value(const char *file, const char *value) {
     return ret;
 }
 
+#ifndef TARGET_USE_CALIBRATION
 int VibratorDualService::left_on(uint32_t innerId, uint32_t timeoutMs, int amplitude)
 {
     int ret;
@@ -321,5 +469,6 @@ int VibratorDualService::right_off(void)
     }
     return 0;
 }
+#endif
 
 } // namespace

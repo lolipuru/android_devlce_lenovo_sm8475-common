@@ -1,5 +1,23 @@
+soong_config_module_type {
+    name: "vibrator_dual_cc_defaults",
+    module_type: "cc_defaults",
+    config_namespace: "vibrator_dual",
+    bool_variables: ["use_calibration"],
+    properties: ["cflags"],
+}
+
+vibrator_dual_cc_defaults {
+    name: "vibrator_dual_defaults",
+    soong_config_variables: {
+        use_calibration: {
+            cflags: ["-DTARGET_USE_CALIBRATION"],
+        },
+    },
+}
+
 cc_binary {
     name: "vendor.qti.hardware.vibrator_dual-service",
+    defaults: ["vibrator_dual_defaults"],
     vendor: true,
     relative_install_path: "hw",
     init_rc: ["vendor.qti.hardware.vibrator_dual-service.rc"],

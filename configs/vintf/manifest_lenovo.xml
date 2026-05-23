@@ -9,4 +9,34 @@
         </interface>
         <fqname>@1.0::IIFAADevice/default</fqname>
     </hal>
+    <hal format="hidl">
+        <name>vendor.zui.hardware.ifaa</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IIFAADevice</name>
+            <instance>default</instance>
+        </interface>
+        <fqname>@1.0::IIFAADevice/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.goodix.hardware.biometrics.fingerprint</name>
+        <transport>hwbinder</transport>
+        <version>2.1</version>
+        <interface>
+            <name>IGoodixFingerprintDaemon</name>
+            <instance>default</instance>
+        </interface>
+        <fqname>@2.1::IGoodixFingerprintDaemon/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.goodix.extend.service</name>
+        <transport>hwbinder</transport>
+        <version>2.0</version>
+        <interface>
+            <name>IGoodixFPExtendService</name>
+            <instance>default</instance>
+        </interface>
+        <fqname>@2.0::IGoodixFPExtendService/default</fqname>
+    </hal>
 </manifest>

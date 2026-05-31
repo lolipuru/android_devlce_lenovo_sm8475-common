@@ -354,7 +354,6 @@ vendor/lib64/libllvm-qgl.so
 vendor/lib64/hw/vulkan.adreno.so
 
 # GNSS
-vendor/bin/edgnss-daemon
 vendor/bin/engine-service
 vendor/etc/init/init.qdmastats.rc
 vendor/etc/cacert_location.pem
@@ -369,7 +368,6 @@ vendor/lib64/libcdfw.so
 vendor/lib64/libcdfw_remote_api.so
 vendor/lib64/libengineplugin.so
 vendor/lib64/libgps.utils.so
-vendor/lib64/libloc_core.so
 vendor/lib64/libloc_util.so
 vendor/lib64/liblocdiagiface.so
 vendor/lib64/liblowi_client.so
@@ -378,9 +376,6 @@ vendor/lib64/libpal_net_if.so
 vendor/lib64/libqcc_file_agent.so
 vendor/lib64/libqdma_file_agent.so
 vendor/lib64/libqppe.so
-vendor/lib64/libsys_info_cache.so
-vendor/lib64/libxtwifi_server_protocol.so
-vendor/lib64/libxtwifi_server_protocol_uri_v3.so
 
 # IMS
 system/lib64/vendor.qti.diaghal-V1-ndk.so

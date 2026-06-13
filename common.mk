@@ -152,6 +152,15 @@ PRODUCT_PACKAGES += \
     init.qti.display_boot.rc \
     init.qti.display_boot.sh
 
+ifeq ($(TARGET_IS_ASPHALT),true)
+PRODUCT_PACKAGES += \
+    vendor.qti.hardware.display.composer-service
+else
+PRODUCT_PACKAGES += \
+    vendor.qti.hardware.display.composer-service.rc \
+    vendor.qti.hardware.display.composer-service.xml
+endif
+
 PRODUCT_COPY_FILES += \
     hardware/qcom-caf/sm8450/display/config/snapdragon_color_libs_config.xml:$(TARGET_COPY_OUT_VENDOR)/etc/snapdragon_color_libs_config.xml
 

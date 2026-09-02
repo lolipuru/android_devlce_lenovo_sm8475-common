@@ -9,6 +9,7 @@
 
 #ifdef TARGET_USE_CALIBRATION
 #include <android-base/properties.h>
+#include <thread>
 #endif
 
 namespace aidl::vendor::qti::hardware::vibrator_dual::device {
@@ -47,31 +48,48 @@ VibratorDualService::VibratorDualService() {
 
 #ifdef TARGET_USE_CALIBRATION
 void VibratorDualService::loadCalibrationData() {
-    char cali_data[64] = {0};
+    std::thread([this]() {
+        char cali_data[64] = {0};
+        bool vib1_ok = false;
+        bool vib2_ok = false;
 
-    if (read_value(CALI_PATH_1, cali_data) == 0) {
-        LOG(INFO) << "Vibrator1 Read Persist Cali Data: " << cali_data;
-        write_value("/sys/class/leds/vibrator/cali_lra", cali_data);
-    } else {
-        LOG(WARNING) << "Vibrator1 read persist file failed, loading default 0xff";
-        write_value("/sys/class/leds/vibrator/cali_lra", "0xff");
-    }
+        for (int retry = 0; retry < 50; ++retry) {
+            if (!vib1_ok && read_value(CALI_PATH_1, cali_data) == 0) {
+                LOG(INFO) << "Vibrator1 Read Persist Cali Data: " << cali_data;
+                write_value("/sys/class/leds/vibrator/cali_lra", cali_data);
+                vib1_ok = true;
+            }
+            memset(cali_data, 0, sizeof(cali_data));
+            if (!vib2_ok && read_value(CALI_PATH_2, cali_data) == 0) {
+                LOG(INFO) << "Vibrator2 Read Persist Cali Data: " << cali_data;
+                write_value("/sys/class/leds/vibrator_aw8697x/cali_lra", cali_data);
+                vib2_ok = true;
+            }
+            if (vib1_ok && vib2_ok) {
+                break;
+            }
+            usleep(200 * 1000); // 200ms
+        }
 
-    memset(cali_data, 0, sizeof(cali_data));
-    if (read_value(CALI_PATH_2, cali_data) == 0) {
-        LOG(INFO) << "Vibrator2 Read Persist Cali Data: " << cali_data;
-        write_value("/sys/class/leds/vibrator_aw8697x/cali_lra", cali_data);
-    } else {
-        LOG(WARNING) << "Vibrator2 read persist file failed, loading default 0xff";
-        write_value("/sys/class/leds/vibrator_aw8697x/cali_lra", "0xff");
-    }
+        if (!vib1_ok) {
+            LOG(WARNING) << "Vibrator1 read persist file failed, loading default 0xff";
+            write_value("/sys/class/leds/vibrator/cali_lra", "0xff");
+        }
+        if (!vib2_ok) {
+            LOG(WARNING) << "Vibrator2 read persist file failed, loading default 0xff";
+            write_value("/sys/class/leds/vibrator_aw8697x/cali_lra", "0xff");
+        }
+
+        android::base::SetProperty("vendor.haptic.calibrate.done", "1");
+        LOG(INFO) << "calibration data loaded";
+    }).detach();
 }
 
 int VibratorDualService::read_value(const char *file, char *value) {
     int fd;
     ssize_t ret;
 
-    fd = TEMP_FAILURE_RETRY(open(file, O_RDWR));
+    fd = TEMP_FAILURE_RETRY(open(file, O_RDONLY));
     if (fd < 0) {
         ALOGE("open %s failed, errno = %d", file, errno);
         return -errno;

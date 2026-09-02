@@ -32,12 +32,15 @@
 
 #include <cutils/properties.h>
 #include <dirent.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <inttypes.h>
 #include <linux/input.h>
 #include <log/log.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <thread>
+#include <unistd.h>
 
 #include "include/Vibrator.h"
 #ifdef USE_EFFECT_STREAM
@@ -337,65 +340,57 @@ int InputFFDevice::playEffect(int effectId, EffectStrength es, long *playLengthM
 }
 
 LedVibratorDevice::LedVibratorDevice() {
-    char devicename[PATH_MAX];
-    int fd;
-
     mDetected = false;
 
-#ifdef TARGET_USE_CALIBRATION
-    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE, "activate");
-    fd = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
-    if (fd < 0) {
-        ALOGE("open %s failed, errno = %d", devicename, errno);
-        return;
-    }
-#else
-    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_L, "activate");
-    fd = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
-    if (fd < 0) {
-        ALOGE("open %s failed, errno = %d", devicename, errno);
-        return;
+    for (int retry = 0; retry < 30; ++retry) {
+        if (check_node()) {
+            break;
+        }
+        usleep(100 * 1000); // 100ms
     }
 
-    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_R, "activate");
-    fd = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
-    if (fd < 0) {
-        ALOGE("open %s failed, errno = %d", devicename, errno);
-        return;
+    if (!mDetected) {
+        ALOGW("unable to detected vibrator during startup");
     }
-#endif
-
-    mDetected = true;
 }
 
-#ifndef TARGET_USE_CALIBRATION
 bool LedVibratorDevice::check_node() {
-    char devicename[PATH_MAX];
-    int fd_l;
-    int fd_r;
+    if (mDetected) {
+        return true;
+    }
 
-    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_L, "activate");
-    fd_l = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
-    if (fd_l < 0) {
-        ALOGE("open %s failed, errno = %d", devicename, errno);
+#ifdef TARGET_USE_CALIBRATION
+    char devicename[PATH_MAX];
+    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE, "activate");
+    int fd = TEMP_FAILURE_RETRY(open(devicename, O_WRONLY));
+    if (fd < 0) {
         return false;
     }
+    close(fd);
+    mDetected = true;
+    ALOGI("Detected vibrator node at %s", LED_DEVICE);
+    return true;
+#else
+    char devicename[PATH_MAX];
+    snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_L, "activate");
+    int fd_l = TEMP_FAILURE_RETRY(open(devicename, O_WRONLY));
+    if (fd_l < 0) {
+        return false;
+    }
+    close(fd_l);
 
     snprintf(devicename, sizeof(devicename), "%s/%s", LED_DEVICE_R, "activate");
-    fd_r = TEMP_FAILURE_RETRY(open(devicename, O_RDWR));
+    int fd_r = TEMP_FAILURE_RETRY(open(devicename, O_WRONLY));
     if (fd_r < 0) {
-        ALOGE("open %s failed, errno = %d", devicename, errno);
         return false;
     }
-
-    ALOGD("checkout vibrator node true");
-
-    close(fd_l);
     close(fd_r);
 
+    mDetected = true;
+    ALOGI("Detected dual vibrator nodes (%s, %s)", LED_DEVICE_L, LED_DEVICE_R);
     return true;
-}
 #endif
+}
 
 int LedVibratorDevice::write_value(const char *file, const char *value) {
     int fd;
@@ -427,6 +422,11 @@ int LedVibratorDevice::write_value(const char *file, const char *value) {
 }
 
 int LedVibratorDevice::on(int32_t timeoutMs) {
+    if (!check_node()) {
+        ALOGE("node not available");
+        return -ENODEV;
+    }
+
     char file[PATH_MAX];
     char value[32];
     int ret;
@@ -520,7 +520,7 @@ int LedVibratorDevice::off()
 ndk::ScopedAStatus Vibrator::getCapabilities(int32_t* _aidl_return) {
     *_aidl_return = IVibrator::CAP_ON_CALLBACK;
 
-    if (ledVib.mDetected) {
+    if (ledVib.check_node()) {
         ALOGD("QTI Vibrator reporting capabilities: %d", *_aidl_return);
         return ndk::ScopedAStatus::ok();
     }
@@ -540,7 +540,7 @@ ndk::ScopedAStatus Vibrator::off() {
     int ret;
 
     ALOGD("QTI Vibrator off");
-    if (ledVib.mDetected)
+    if (ledVib.check_node())
         ret = ledVib.off();
     else
         ret = ff.off();
@@ -555,7 +555,7 @@ ndk::ScopedAStatus Vibrator::on(int32_t timeoutMs,
     int ret;
 
     ALOGD("Vibrator on for timeoutMs: %d", timeoutMs);
-    if (ledVib.mDetected)
+    if (ledVib.check_node())
         ret = ledVib.on(timeoutMs);
     else
         ret = ff.on(timeoutMs);
@@ -581,7 +581,7 @@ ndk::ScopedAStatus Vibrator::perform(Effect effect, EffectStrength es, const std
     long playLengthMs;
     int ret;
 
-    if (ledVib.mDetected)
+    if (ledVib.check_node())
         return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
 
     ALOGD("Vibrator perform effect %d", effect);
@@ -611,7 +611,7 @@ ndk::ScopedAStatus Vibrator::perform(Effect effect, EffectStrength es, const std
 }
 
 ndk::ScopedAStatus Vibrator::getSupportedEffects(std::vector<Effect>* _aidl_return) {
-    if (ledVib.mDetected)
+    if (ledVib.check_node())
         return ndk::ScopedAStatus::ok();
 
     *_aidl_return = {Effect::CLICK, Effect::DOUBLE_CLICK, Effect::TICK, Effect::THUD,
@@ -624,7 +624,7 @@ ndk::ScopedAStatus Vibrator::setAmplitude(float amplitude) {
     uint8_t tmp;
     int ret;
 
-    if (ledVib.mDetected)
+    if (ledVib.check_node())
         return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
 
     ALOGD("Vibrator set amplitude: %f", amplitude);
@@ -644,7 +644,7 @@ ndk::ScopedAStatus Vibrator::setAmplitude(float amplitude) {
 }
 
 ndk::ScopedAStatus Vibrator::setExternalControl(bool enabled) {
-    if (ledVib.mDetected)
+    if (ledVib.check_node())
         return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
 
     ALOGD("Vibrator set external control: %d", enabled);

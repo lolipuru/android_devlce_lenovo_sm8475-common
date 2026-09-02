@@ -55,7 +55,7 @@ int main() {
     binder_status_t status = AServiceManager_addService(vib->asBinder().get(), instance.c_str());
     CHECK(status == STATUS_OK);
 
-    std::thread initThread([&]() {
+    std::thread initThread([cvib]() {
         using std::literals::chrono_literals::operator""s;
         ::android::base::WaitForProperty(kHapticCalibrateProp, "1", 500s);
         cvib->init(nullptr);

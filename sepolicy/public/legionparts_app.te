@@ -1,2 +1,0 @@
-type legionparts_app, domain;
-typeattribute legionparts_app mlstrustedsubject;

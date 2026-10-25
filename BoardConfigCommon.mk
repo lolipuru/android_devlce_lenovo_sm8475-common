@@ -60,6 +60,10 @@ BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 TARGET_BOOTLOADER_BOARD_NAME := taro
 TARGET_NO_BOOTLOADER := true
 
+# DTBO
+BOARD_USES_QCOM_MERGE_DTBS_SCRIPT := true
+TARGET_NEEDS_DTBOIMAGE := true
+
 # Filesystem
 TARGET_FS_CONFIG_GEN := $(COMMON_PATH)/configs/config.fs
 
@@ -80,6 +84,48 @@ BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_RAMDISK_USE_LZ4 := true
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
+
+TARGET_KERNEL_SOURCE := kernel/lenovo/sm8475
+TARGET_KERNEL_CONFIG := \
+    gki_defconfig \
+    vendor/waipio_GKI.config \
+    vendor/$(PRODUCT_DEVICE)_GKI.config
+KERNEL_LTO := none
+
+# Kernel modules
+TARGET_KERNEL_EXT_MODULE_ROOT := kernel/lenovo/sm8475-modules
+TARGET_KERNEL_EXT_MODULES := \
+	qcom/opensource/mmrm-driver \
+	qcom/opensource/audio-kernel \
+	qcom/opensource/camera-kernel \
+	qcom/opensource/cvp-kernel \
+	qcom/opensource/dataipa/drivers/platform/msm \
+	qcom/opensource/datarmnet/core \
+	qcom/opensource/datarmnet-ext/aps \
+	qcom/opensource/datarmnet-ext/offload \
+	qcom/opensource/datarmnet-ext/shs \
+	qcom/opensource/datarmnet-ext/perf \
+	qcom/opensource/datarmnet-ext/perf_tether \
+	qcom/opensource/datarmnet-ext/sch \
+	qcom/opensource/datarmnet-ext/wlan \
+	qcom/opensource/display-drivers/msm \
+	qcom/opensource/eva-kernel \
+	qcom/opensource/video-driver \
+	qcom/opensource/wlan/qcacld-3.0/.qca6490 \
+	qcom/opensource/wlan/qcacld-3.0/.qca6750
+
+BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/configs/modules/modules.load.vendor_dlkm))
+BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/configs/modules/modules.load.first_stage))
+BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD  := $(strip $(shell cat $(DEVICE_PATH)/configs/modules/modules.load.recovery))
+BOOT_KERNEL_MODULES := $(strip $(shell cat $(DEVICE_PATH)/configs/modules/modules.load.recovery))
+BOOT_KERNEL_MODULES += \
+    adsp_loader_dlkm.ko \
+    gpr_dlkm.ko \
+    q6_notifier_dlkm.ko \
+    q6_pdr_dlkm.ko \
+    qti_battery_charger_main.ko \
+    snd_event_dlkm.ko \
+    spf_core_dlkm.ko
 
 # Metadata
 BOARD_USES_METADATA_PARTITION := true
